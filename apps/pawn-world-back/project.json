@@ -1,0 +1,57 @@
+{
+  "name": "pawn-world-back",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/pawn-world-back/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/pawn-world-back",
+        "main": "apps/pawn-world-back/src/main.ts",
+        "tsConfig": "apps/pawn-world-back/tsconfig.app.json",
+        "assets": ["apps/pawn-world-back/src/assets"],
+        "isolatedConfig": true,
+        "webpackConfig": "apps/pawn-world-back/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "pawn-world-back:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "pawn-world-back:build:development"
+        },
+        "production": {
+          "buildTarget": "pawn-world-back:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/pawn-world-back/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/pawn-world-back/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,0 +1,46 @@
+name: pawn-world-front
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+# Needed for nx-set-shas within nx-cloud-main.yml, when run on the master branch
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    environment: webapp
+    steps:
+      - name: 👀 Recupération de la dernière version
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 💀 Installation de Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - name: 📓 Installation de Nx
+        uses: nrwl/nx-set-shas@v3
+      - name: 💎 Installation de Yarn
+        run: npm install --global yarn
+      - name: 🦊 Installation du Projet
+        run: yarn install
+      - name: 🚧 Build...
+        run: npx nx build pawn-world-front
+
+      - name: ☑️ SFTP uploader
+        uses: pressidium/lftp-mirror-action@v1
+        with:
+          host: 'continued.fr'
+          port: 22
+          user: 'my_webapp'
+          pass: ${{ secrets.PASSWORD }}
+          localDir: './dist/apps/pawn-world-front/'
+          remoteDir: '/www/'
+          reverse: true
